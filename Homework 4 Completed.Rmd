@@ -1,0 +1,93 @@
+---
+title: "Nielsen Homework 4 MSDS6306"
+author: "Heber C. Nielsen, MD"
+date: "July 4, 2018"
+output: html_document
+---
+#MSDS 6306 Doing Data Science - Section 404
+#Homework Assignment #4
+#Heber Nielsen
+#
+##QUESTION 1: FIVETHIRTYEIGHT DATA
+```{r setup}
+chooseCRANmirror(graphics=FALSE, ind=1)
+knitr::opts_chunk$set(echo = TRUE)
+setwd("~/R/R Default Working Folder/Homework_4/Schmoostuff6306")
+##
+##Parts 1a and 1b
+df <- load("C:/Users/Admin/Documents/GitHub/fivethirtyeight/data/college_all_ages.rda")
+head (college_all_ages, 4)
+df
+summary (college_all_ages)
+str (college_all_ages)
+install.packages("remotes")
+library("remotes", lib.loc="~/R/win-library/3.5")
+install.packages("plotly")
+##install.packages("stringi")
+install.packages ("rudeboybert/fivethirtyeight", build_vignettes = TRUE)
+##browseVignettes (package = "fivethirtyeight")
+##
+##Part 1c:
+### To see a more detailed list of all data sets, see the package vignette
+###: vignette("fivethirtyeight", package = "fivethirtyeight")
+##
+##The related news story is found at this web address: http://fivethirtyeight.com/features/the-economic-guide-to-picking-a-college-major/. The story details the results of analyses of the proportion of college students enrolled in, or recently graduated in, specific majors. These proportions are contrasted with the average earning power of starting positions for individuals with those majors. There is a remarkable difference between what are popular majors and what are better paying jobs. 
+##
+##Part 1d:
+dim(college_all_ages)
+head (college_all_ages, 1)
+```
+---
+#
+##QUESTION 2: DATA SUMMARY
+
+---
+```{r}
+##Part 2a:
+df <- data.frame(college_all_ages)
+colnames (df)
+College_Column_Names <- c(colnames(df))
+College_Column_Names
+length (College_Column_Names)
+##
+##Part 2b:
+library("plyr", lib.loc="~/R/win-library/3.5")
+Maj_Cat_Count <- data.frame (unique(df$major_category))
+Maj_Cat_Count
+major_count <- count (df, "major_category")
+major_count
+##
+##Part 2c:
+library("ggplot2", lib.loc="~/R/win-library/3.5")
+library("RColorBrewer", lib.loc="~/R/win-library/3.5")
+par(las=2)
+barplot (major_count$freq, beside = TRUE, horiz = TRUE, col = blues9, border = "black", names.arg = major_count$major_category, main = "Unique College Majors by Discipline", sub = "Number per Discipline", xlab = "Individual Majors", xlim = range(pretty(c(0, major_count$freq))))
+##
+##Part 2d:
+write.csv (college_all_ages, file = "College 538 Data.csv", row.names = FALSE)
+```
+---
+#
+##QUESTION #3: CODEBOOK
+
+---
+```{r}
+###Part 3a:
+###The Github repository for my homework is "https://github.com/hebernielsen/SchmooStuff-MSDS-6306"
+###Part 3b:
+###The README file is in the "SchmooStuff-MSDS-6306" Root Directory. A copy is also in the "Homework 4" subdirectory.
+###Part 3c:
+###The subdirectory "Homework 4" in "SchmooStuff-MSDS-6306" contains the RMarkdown script, HTML file, and my data file "College 538 Data.csv". The README file credits fivethirtyeight for the data.
+###Part 3d:
+###This RMarkdown script provides the link to my Github repository.
+```
+---
+#
+##QUESTION #4: SWIRL
+
+---
+```{r}
+###The output file for Module 15 of "R Programming" is included in the "Homework 4" subdirectory and is titled "Heber Nielsen Homework 4 Swirl 15". Nearly all of the output for this module was graphics, I did not copy those into the file. I did copy into the file the module statements and instructions/requests, the code I typed into the module which completed the requests, and the progress bars. In the two or three instances an output other than the graphics was produced by Swirl. I included those in my file.
+```
+
+

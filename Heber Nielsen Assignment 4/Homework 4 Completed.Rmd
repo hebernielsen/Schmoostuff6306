@@ -73,7 +73,8 @@ write.csv (college_all_ages, file = "College 538 Data.csv", row.names = FALSE)
 ---
 ```{r}
 ###Part 3a:
-###The Github repository for my homework is "https://github.com/hebernielsen/SchmooStuff-MSDS-6306"
+###The Github repository for my homework folders is: "https://github.com/hebernielsen/SchmooStuff-MSDS-6306"
+###The particular address for Homework 4 is: "https://github.com/hebernielsen/Schmoostuff6306/tree/master/Heber%20Nielsen%20Assignment%204"
 ###Part 3b:
 ###The README file is in the "SchmooStuff-MSDS-6306" Root Directory. A copy is also in the "Homework 4" subdirectory.
 ###Part 3c:

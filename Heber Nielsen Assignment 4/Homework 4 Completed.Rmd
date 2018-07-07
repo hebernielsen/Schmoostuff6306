@@ -25,7 +25,7 @@ library("remotes", lib.loc="~/R/win-library/3.5")
 install.packages("plotly")
 ##install.packages("stringi")
 install.packages ("rudeboybert/fivethirtyeight", build_vignettes = TRUE)
-browseVignettes (package = "fivethirtyeight")
+##browseVignettes (package = "fivethirtyeight")
 ##
 ##Part 1c:
 ### To see a more detailed list of all data sets, see the package vignette
@@ -38,6 +38,7 @@ dim(college_all_ages)
 head (college_all_ages, 1)
 ```
 ---
+#
 ##QUESTION 2: DATA SUMMARY
 
 ---
@@ -51,7 +52,6 @@ length (College_Column_Names)
 ##
 ##Part 2b:
 library("plyr", lib.loc="~/R/win-library/3.5")
-library("dplyr", lib.loc="~/R/win-library/3.5")
 Maj_Cat_Count <- data.frame (unique(df$major_category))
 Maj_Cat_Count
 major_count <- count (df, "major_category")
@@ -67,17 +67,27 @@ barplot (major_count$freq, beside = TRUE, horiz = TRUE, col = blues9, border = "
 write.csv (college_all_ages, file = "College 538 Data.csv", row.names = FALSE)
 ```
 ---
+#
 ##QUESTION #3: CODEBOOK
 
-###3a:
-###The Github repository for my homework is "https://github.com/hebernielsen/SchmooStuff-MSDS-6306"
-###3b:
-###The README file is in the "SchmooStuff-MSDS-6306" Root Directory. A copy is also in the "Homework 4" subdirectory.
-###3c:
-###The subdirectory "Homework 4" in "SchmooStuff-MSDS-6306" contains the RMarkdown script, HTML file, and my data file "College 538 Data.csv". The README file credits fivethirtyeight for the data.
-###3d:
-###This RMarkdown script provides the link to my Github repository.
-
-##QUESTION #4: SWIRL
-###The output file for Module 15 of "R Programming" is included in the "Homework 4" subdirectory "Heber Nielsen Homework 4 Swirl 15". Nearly all of the output for this module was graphics, these were not copied into the file. The file gives the module statements and instructions/requests, the code I typed into the module which completed the request, and the progress bars. In the two or three instances that an output other than the graphics was produced, I included that in the output file.
 ---
+```{r}
+###Part 3a:
+###The Github repository for my homework is "https://github.com/hebernielsen/SchmooStuff-MSDS-6306"
+###Part 3b:
+###The README file is in the "SchmooStuff-MSDS-6306" Root Directory. A copy is also in the "Homework 4" subdirectory.
+###Part 3c:
+###The subdirectory "Homework 4" in "SchmooStuff-MSDS-6306" contains the RMarkdown script, HTML file, and my data file "College 538 Data.csv". The README file credits fivethirtyeight for the data.
+###Part 3d:
+###This RMarkdown script provides the link to my Github repository.
+```
+---
+#
+##QUESTION #4: SWIRL
+
+---
+```{r}
+###The output file for Module 15 of "R Programming" is included in the "Homework 4" subdirectory and is titled "Heber Nielsen Homework 4 Swirl 15". Nearly all of the output for this module was graphics, I did not copy those into the file. I did copy into the file the module statements and instructions/requests, the code I typed into the module which completed the requests, and the progress bars. In the two or three instances an output other than the graphics was produced by Swirl. I included those in my file.
+```
+
+

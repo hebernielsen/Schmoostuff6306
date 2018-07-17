@@ -1,0 +1,68 @@
+README.TXT file
+CODEBOOK - HOMEWORK 5
+
+Heber Nielsen
+MSDS 6306
+Github repository: Schmoostuff6306
+Subfolder "Homework 5"
+
+A list of the contents of this folder is in the "README.TXT" file in this folder
+
+This codebook describes the objects in my code for Project 5, as mentioned in the document "Homework_5_Heber_Nielsen.html" document from my markdown file.
+
+Packages (from http://Cran.org and stored at "c:/Users/Admin/Documents/R/win-library/3.5"):
+	- "stats"
+	- "data.table"
+	- "dplyr"
+
+Data Files:
+	- Data frame "df" - contains the loaded contents of data file "yob2016.txt"
+		 - data on names given to newborn babies in the USA in 2016
+		- Variables in df:
+			- "Name" - baby name
+			- "sex" - sex of the baby (M, male; F, female)
+			- "Frequency" - number of (male or female) babies given that name in 2016
+	- Data frame "y2015" - contains the loaded contents of data file "yob2015.txt" 
+		- data on names given to newborn babies in the USA in 2016
+		- Variables:
+			- "Name" - baby name
+			- "sex" - sex of the baby (M, male; F, female)
+			- "Frequency" - number of (male or female) babies given that name in 2015
+
+	- "y2016" - data frame, a subset of "df" that was cleaned by omitting a misspelled (and duplicate when spelling corrected) female 	name "Fionayyy"
+		-Variables:
+			- "Name" - baby name
+			- "sex" - sex of the baby (M, male; F, female)
+			- "Frequency" - number of (male or female) babies given that name in 2016
+	- "FINAL" - data frame, created by merging "y2015" and "y2016" on the variable "Name"
+		- Variables:
+			- "Name" - baby name
+			- "sex2015" - sex of baby from the "y2015" data frame
+			- "Frequency2015" - number of babies from the "y2015" data frame with the specific name
+			- "sex2016" - sex of baby from the "y2016" data frame
+			- "Frequency2016" - number of babies from the "y2016" data frame with the specific name
+			- "Total" - sum of "Frequency2015" and "Frequency 2016", the number of babies who received the name in 2015			-2016
+	- "FINAL1" - data frame, created by ordering FINAL alphabetically by name
+		- Variables:
+			- "Name" - baby name
+			- "sex2015" - sex of baby from the "y2015" data frame
+			- "Frequency2015" - number of babies from the "y2015" data frame with the specific name
+			- "sex2016" - sex of baby from the "y2016" data frame
+			- "Frequency2016" - number of babies from the "y2016" data frame with the specific name
+			- "Total" - sum of "Frequency2015" and "Frequency 2016", the number of babies who received the name in 2015				-2016
+	- "Final_Girls - data frame, created by subsetting "FINAL1" to retrieve just the girls names
+		- Variables:
+			- "Name" - baby name
+			- "sex2015" - sex of baby from the "y2015" data frame
+			- "Frequency2015" - number of babies from the "y2015" data frame with the specific name
+			- "sex2016" - sex of baby from the "y2016" data frame
+			- "Frequency2016" - number of babies from the "y2016" data frame with the specific name
+			- "Total" - sum of "Frequency2015" and "Frequency 2016", the number of babies who received the name in 2015				-2016		
+	- "TopTenGirlNames" - Data frame, contains the top 10 girls names, by frequency, from "Final_Girlsl"
+		- Variables:
+			- "Name" - girl's name
+			- "Total" - total number of girls in 2015-2016 who received that name
+	- "Homework_5.csv" - data file in CSV format of the data in "TopTenGirlNames
+		- Variables:
+			- "Name" - girl's name
+			- "Total" - total number of girls in 2015-2016 who received that name

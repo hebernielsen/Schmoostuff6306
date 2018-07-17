@@ -1,0 +1,78 @@
+---
+title: "Assignment 5"
+author: "Heber Nielsen"
+date: "July 8, 2018"
+output: html_document
+---
+##Question 1. Data Munging
+
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(data.table)
+library("dplyr", lib.loc="~/R/win-library/3.5")
+getwd()
+setwd (getwd()) 
+##Question 1a:
+df <- data.frame (read.table ("C:/Users/Admin/Documents/R/R Default Working Folder/Homework_5/yob2016.txt", header = FALSE, col.names = c("Name", "sex", "Frequency"), sep = ";"))
+
+##Question 1b:
+dim (df)
+str(df)
+head (df, 5)
+
+##Question 1c:
+grep ("yyy$", df$Name, ignore.case = T, value = T)
+
+##Question 1d:
+y2016 <- subset (df, df$Name != "Fionayyy")
+dim (y2016)
+head (y2016)
+```
+
+##Question 2. Data Merging
+
+```{r}
+##Question 2a:
+y2015 <- data.frame (read.table ("C:/Users/Admin/Documents/R/R Default Working Folder/Homework_5/yob2015.txt", header = FALSE, col.names = c("Name", "sex", "Frequency"), sep = ","))
+
+##Question 2b:
+tail (y2015, 10)
+##It is interesting that they all begin with Z, they are listed alphabetically, and that there are exactly 5 of each of them. It is also interesting that the same three things are true for the last 10 in the 2016 data, but that only two of the last 10 names in the 2016 data were in the last 10 names in the 2015 list.
+
+##Question 2c:
+FINAL <- merge.data.frame (y2015, y2016, by = "Name", all.x = F, all.y = F)
+```
+
+##Question 3. Data Summary
+
+```{r}
+##Question 3a:
+FINAL[,6] <- FINAL[,3] + FINAL[,5]
+setnames (FINAL, old=c("Name", "sex.x", "Frequency.x", "sex.y", "Frequency.y", "V6"), new=c("Name", "sex2015", "Frequency2015", "sex2016", "Frequency2016", "Total"))
+dim (FINAL)
+length (unique(FINAL$Name))
+##I have two results here. First, I find that different "popular" names were given to 31,641 babies in the combined 2015 and 2016 data sets. This is not the same as the number of babies who received a different name. Note that this is 1,422 less than the year 2015 and 1,227 less than the year 2016. The difference (fewer names in the combined years) reflects the fact that we were asked to merge the two data sets so that there were no "NA" values. This means that names had to appear in both lists to be included. Names in 2015 list that were not on the list from 2016, and names added to the 2016 list that didn't appear in 2015, would be removed from the combined set upon merging by the "all.x = FALSE" argument in the code listed in 2C. The combination of differences between the two lists should add up to the differences in length (or dimension) between the FINAL data set and the y2015 and y2016 data sets. This problem could be resolved by allowing the merge to create NA values, then assigning those as "0"; there would then need to be a further data tidying step to combine names which are used for both boys and girls.
+##The second result comes from asking for the "unique" popular names. This tells us that 24,636 babies were given a name that was different from any other baby. The reason for the two results lies in the fact that some names are used for boys and girls. The first result only looked at the number of names, which allows the result that a boy named (for example) "Morgan" and a girl named "Morgan" would be counted as two. The second result, by using the "unique" function, counts this circumstance as one usage. Thus the second number is a more true representation of the number of individual names which appear on the list.
+
+##Question 3b:
+attach (FINAL)
+FINAL1 <- FINAL[order(-Total),]
+head (FINAL1, 10)
+##This result lists the top 10 most popular names.
+
+##Question 3c:
+Final_Girls <- subset (x=FINAL1, sex2015 == "F" & sex2016 == "F")
+head (Final_Girls, 10)
+##This result lists the top most popular girls names.
+##This also takes care of an issue I recognized earlier, that in my "FINAL" data frame I did not account for names which may have been listed as boy in one year and girl in the other year. The code for this "Final_Girls" data frame produces only those names which were listed as girls in both years. If I subsetted by "sex2015 == "F" | sex2016 == "F" then I had a data frame of length 20358, whereas this data frame has a length of 15267.
+
+##Question 3d:
+TopTenGirlsNames <- data.frame (Final_Girls)
+TopTenGirlsNames <- slice (TopTenGirlsNames, 1:10)
+##This gave the top 10 girls names
+TopTenGirlsNames <- TopTenGirlsNames [ , c("Name", "Total")]
+write.csv (TopTenGirlsNames, file = "Homework_5")
+##This created the data frame "TopTenGirlsNames" with only the variables "Names" and "Total" and just the top ten names from my list of girls names. It then created the .csv file and wrote it to the console.
+```

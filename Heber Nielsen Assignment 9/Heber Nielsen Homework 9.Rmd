@@ -1,0 +1,125 @@
+---
+title: "Homework_9"
+author: "Heber Nielsen"
+date: "July 21, 2018"
+output: html_document
+---
+#Homework 9
+
+##Question 1: Harry Potter Cast
+###1a: I went to the page, right-clicked to view the source code, and used the "search" function in Firefox to find "Cast".
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+###1b: Scrape the page
+setwd (getwd())
+library("dplyr", lib.loc="~/R/win-library/3.5")
+library("ggplot2", lib.loc="~/R/win-library/3.5")
+library("httr", lib.loc="~/R/win-library/3.5")
+library("RCurl", lib.loc="~/R/win-library/3.5")
+library("repmis", lib.loc="~/R/win-library/3.5")
+library("urltools", lib.loc="~/R/win-library/3.5")
+library("tidyverse", lib.loc="~/R/win-library/3.5")
+library("rvest", lib.loc="~/R/win-library/3.5")
+library("markdown", lib.loc="~/R/win-library/3.5")
+library("rmarkdown", lib.loc="~/R/win-library/3.5")
+#
+##Answer to 1b: Scrape page and create data frame of the Cast
+#
+Harry_Page <- read_html ("http://www.imdb.com/title/tt1201607/fullcredits?ref_=tt_ql_1")
+Harry_Tables <- html_nodes (Harry_Page, "table")
+head(Harry_Tables)
+Harry_Table_Cast <- Harry_Tables [3]
+Harry_Table_Cast2 <- html_table(Harry_Table_Cast, fill = T)
+Harry_Cast = data.frame (Harry_Table_Cast2)
+
+##Answer to 1C: Clean up the table:
+#
+Harry_Cast <- rename (Harry_Cast, "Actor" = X2)
+Harry_Cast <- rename (Harry_Cast, "Role" = X4)
+Harry_Cast2 <- Harry_Cast [ Harry_Cast$X1 !="Rest of cast listed alphabetically:", ]
+Harry_Cast2 <- Harry_Cast [ Harry_Cast$Actor !="", ]
+head (Harry_Cast2)
+Harry_Cast3 <- anchors::replace.value (Harry_Cast2, "Role", from = "Griphook /  \n            Professor Filius Flitwick", to = "Griphook / Professor Filius Flitwick")
+Harry_Cast4 <- data.frame (Harry_Cast3$Actor, Harry_Cast3$Role)
+Harry_Cast4 <- rename (Harry_Cast4, "Role" = Harry_Cast3.Role)
+Harry_Cast4 <- rename (Harry_Cast4, "Actor" = Harry_Cast3.Actor)
+Harry_Cast4 <- Harry_Cast4 [-(92), ]
+Harry_Cast4$Actor[90:100]
+
+#Answer to 1d: Split Actor names
+#
+Harry_Cast5 <- separate (Harry_Cast4, Actor, c ("FirstName", "Surname" ), sep = " ", extra = "merge", fill = "left")
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Helena")]<- "Helena Bonham"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Bonham Carter")]<- "Carter"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Sian")]<- "Sian Grace"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Grace Phillips")]<- "Phillips"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Peter")]<- "Peter G."
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "G. Reed")]<- "Reed"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Bob")]<- "Bob Yves Van Hellenberg"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Yves Van Hellenberg Hubar")]<- "Hubar"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Michael")]<- "Michael Henbury"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Henbury Ballan")]<- "Ballan"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Gioacchino")]<- "Gioacchino Jim"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Jim Cuffaro")]<- "Cuffaro"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Grace")]<- "Grace Meurisse"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Meurisse Francis")]<- "Francis"
+Harry_Cast5$FirstName [which(Harry_Cast5$FirstName == "Sean")]<- "Sean Francis"
+Harry_Cast5$Surname [which(Harry_Cast5$Surname == "Francis George")]<- "George"
+#
+##Answer to 1e: First 10 rows of the data frame
+#
+head (Harry_Cast5)
+#
+#Question 2: SportsBall
+##Answer to 2a: View the San Antonio Spurs team statistics web page
+#
+Spurs_Page <- read_html ("http://www.espn.com/nba/team/stats/_/name/sa/san-antonio-spurs")
+#
+##Answer to 2b: Scrape page and create table of team shooting statistics
+#
+Spurs_Tables <- html_nodes (Spurs_Page, "table")
+SpursShooting <- Spurs_Tables [2]
+SpursShooting <- html_table (SpursShooting, fill = T)
+SpursShootingStats <- data.frame (SpursShooting)
+#
+##Answer to 2c: Clean the data table
+#
+SpursShootingStats <- tbl_df (SpursShootingStats)
+SpursShootingStats <- rename (SpursShootingStats, "Player" = X1)
+SpursShootingStats <- rename (SpursShootingStats, "FG Made" = X2)
+SpursShootingStats <- rename (SpursShootingStats, "FG Attempts" = X3)
+SpursShootingStats <- rename (SpursShootingStats, "FG_Percentage" = X4)
+SpursShootingStats <- rename (SpursShootingStats, "3 Pointers Made" = X5)
+SpursShootingStats <- rename (SpursShootingStats, "3 Pointer Attempts" = X6)
+SpursShootingStats <- rename (SpursShootingStats, "3 Point Percentage" = X7)
+SpursShootingStats <- rename (SpursShootingStats, "Free Throws Made" = X8)
+SpursShootingStats <- rename (SpursShootingStats, "Free Throw Attempts" = X9)
+SpursShootingStats <- rename (SpursShootingStats, "Free Throw Percentage" = X10)
+SpursShootingStats <- rename (SpursShootingStats, "2 Pointers Made" = X11)
+SpursShootingStats <- rename (SpursShootingStats, "2 Point Attempts" = X12)
+SpursShootingStats <- rename (SpursShootingStats, "2 Point Percentage" = X13)
+SpursShootingStats <- rename (SpursShootingStats, "Avg Points Per Shot" = X14)
+SpursShootingStats <- rename (SpursShootingStats, "Adjusted FG Percentage
+" = X15)
+SpursShootingStats <- SpursShootingStats [-(2), ]
+SpursShootingStats <- SpursShootingStats [-(1), ]
+SpursShootingStats <- SpursShootingStats %>% separate (Player, c("Name", "Position"), ",")
+##Note from Heber: The warning from previous line is because line 15 is not
+##a player name but the "Total" category. I remove this in the next line.
+SpursShootingStats <- SpursShootingStats [-(15), ]
+SpursDataType <- sapply(SpursShootingStats, class)
+SpursDataType
+makecolsnumer = 3:16
+SpursShootingStats <- SpursShootingStats %>% mutate_at(funs(as.numeric), .vars =  makecolsnumer)
+SpursDataType <- sapply(SpursShootingStats, class)
+SpursDataType
+#
+##Answer to 2d: Plot shooting percentage as horizontal bar chart by position
+#
+SpursShootingDF <- data.frame (SpursShootingStats$Name, SpursShootingStats$Position, SpursShootingStats$FG_Percentage)
+SpursShootingDF <- rename (SpursShootingDF, "Name" = SpursShootingStats.Name)
+SpursShootingDF <- rename (SpursShootingDF, "Position" = SpursShootingStats.Position)
+SpursShootingDF <- rename (SpursShootingDF, "FG_Percentage" = SpursShootingStats.FG_Percentage)
+ggplot(data = SpursShootingDF) + geom_col (mapping = aes (y = FG_Percentage, x = Name, color = Position, fill = Position)) + coord_flip()
+```

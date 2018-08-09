@@ -1,0 +1,142 @@
+---
+title: "Nielsen_Homework_10"
+author: "Heber Nielsen"
+date: "August 1, 2018"
+output: html_document
+---
+
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
+setwd("c:/Users/Admin/Documents/R/R Default Working Folder/Homework_10")
+getwd()
+library("dplyr", lib.loc="~/R/win-library/3.5")
+library("ggplot2", lib.loc="~/R/win-library/3.5")
+library("repmis", lib.loc="~/R/win-library/3.5")
+library("tidyverse", lib.loc="~/R/win-library/3.5")
+library("markdown", lib.loc="~/R/win-library/3.5")
+library("rmarkdown", lib.loc="~/R/win-library/3.5")
+library("egg", lib.loc="~/R/win-library/3.5")
+
+#
+#Question 1: Mental Health Clinics
+#
+##Question 1a and 1b;
+#
+library("datasets", lib.loc="C:/Program Files/R/R-3.5.1/library")
+#My_States <- state.abb
+#head (My_States)
+##I didn't realize at first that I could do this from the data set. After realizing that, I created a second file of state names, code shown below, and pruned it as directed in the Assignment.
+VA_Data <- load("~/R/R Default Working Folder/Homework_10/Data/N-MHSS-2015-DS0001-data-r.rda")
+VA_Data <- data.frame (mh2015_puf)
+dim (VA_Data)
+#
+##Question 1c: Get Center counts by State and filter out ##non-states
+#
+Grep_AS <- grep (VA_Data [,2], "^AS$")
+Grep_GU <- grep (VA_Data [,2], "^GU$")
+Grep_PR <- grep (VA_Data [,2], "^PR$")
+Grep_VI <- grep (VA_Data [,2], "^VI$")
+##There are entries for the 4 territories. Now I will remove them.
+Grep_PR
+My_VA_Data <- slice (VA_Data, -12575:-12581)
+My_VA_Data <- slice (My_VA_Data, -12613)
+My_VA_Data <- slice (My_VA_Data, -12574)
+Grep_PR <- grep (My_VA_Data [,2], "^PR$")
+Grep_PR
+Grep_AS <- grep (My_VA_Data [,2], "^AS$")
+Grep_AS
+Grep_GU <- grep (My_VA_Data [,2], "^GU$")
+Grep_GU
+Grep_VI <- grep (My_VA_Data [,2], "^VI$")
+Grep_VI
+My_VA_Data <- slice (My_VA_Data, -12605)
+Grep_PR <- grep (My_VA_Data [,2], "^PR$")
+Grep_PR
+Grep_AS <- grep (My_VA_Data [,2], "^AS$")
+Grep_AS
+Grep_GU <- grep (My_VA_Data [,2], "^GU$")
+Grep_GU
+Grep_VI <- grep (My_VA_Data [,2], "^VI$")
+Grep_VI
+class (My_VA_Data)
+My_VA_Data <- arrange (My_VA_Data, LST, CASEID)
+My_VA_States <- select (My_VA_Data, CASEID, LST)
+My_VA_States <- group_by(My_VA_States, LST)
+My_VA_States_Summary1 <- summarize (My_VA_States, count = n())
+My_VA_States_Summary53 <- My_VA_States_Summary1[-(49),]#Remove VI (Virgin Islands)
+My_VA_States_Summary52 <- My_VA_States_Summary53[-(41),]#Remove PR (Puerto Rico)
+My_VA_States_Summary51 <- My_VA_States_Summary52[-(13),]#Remove Gu (Guam)
+My_VA_States_Summary <- My_VA_States_Summary51
+
+VA_Data <- as_tibble (My_VA_Data)
+
+##Variable "My_VA_States_Summary1$count" contains the summed hospitals for each state.
+##I now confirm this by adding up the total counts to show they equal the sum of the entries for each variable in the master data variable "My_VA_Data".
+sum(My_VA_States_Summary1$count)
+dim (My_VA_States)
+##
+##Question 1d: ggplot barplot of the filtered data set.
+##
+My_VA_States_Summary <- rename (My_VA_States_Summary, "States" = "LST")
+My_VA_States_Summary <- rename (My_VA_States_Summary, "Number_Mental_Health_Facilities" = "count")
+ggplot(data = My_VA_States_Summary) + geom_col (mapping = aes (y = Number_Mental_Health_Facilities, x = States, color = States, fill = States)) + theme(axis.text.x = element_text(angle = 90, hjust = 1))## + coord_flip()
+##
+#2. CLEANING AND BRINGING IN NEW FEATURES
+##
+#2a Read "statesize.csv" into R. Use "paste()" to see why this won't merge with my data frame "My_VA_States". Comment.
+State_Size <- read.csv("~/R/R Default Working Folder/Homework_10/Data/statesize (1).csv")
+View(State_Size)
+State_Size<-as.data.frame(State_Size)
+dim (State_Size)
+paste (My_VA_States_Summary$States, State_Size$Abbrev)
+#
+##I see two issues. First, as shown by the <dim> command, there are only 50 entries in State_Size$Abbrev, whereas there are 51 in My_VA_States_Summary$States. This is confirmed by the paste0 command which identifies a failed match of the DC from the ~$States variable with an identical entry in ~$Abbrev. Thus, the entries in ~$StateName recycle one name at the end of the ~$States list. Second, the entries in these two variables are not in the same order. One is listed alphabetically by state abbreviations. The other is listed alphabetically by the actual state names. For example, three of the first four entries are mismatched. The problem with the missing entry can be fixed by inserting "DC" into position 8 in the ~$StateName list.
+#
+#2b. Correct the problem in the LST (my column name is States). and merge the two data frames.
+#
+State_Size <- rename (State_Size, "State_Code2" = "Abbrev")
+State_Size <- add_row(State_Size, StateName = "Distr of Columbia", SqMiles = 61.05, State_Code2 = "DC", Region = "South", .before=8)
+head (State_Size, 10)
+State_Size_Arranged <- arrange (State_Size, State_Code2)
+View(State_Size_Arranged)
+State_Size_ReArranged <- add_row(State_Size_Arranged, StateName = "District of Columbia", SqMiles = 61.05, State_Code2 = "DC", Region = "South", .before=8)
+View(State_Size_ReArranged)
+State_Size_ReArranged <- State_Size_ReArranged[-(52)]
+State_Size_ReArranged <- rename (State_Size_ReArranged, "State_Code" = "State_Code2")
+#VA <- merge(State_Size_ReArranged, My_VA_States_Summary, "State_Code")
+#This last command was the last of numerous attempts to a straight "merge" procedure. They all failed, even when I constructed small data sets from scratch or sliced off a small (10 rows) portion of this data set. I assume that I have something in the environment or in the structure of my data frames (although I even started again from the beginning to avoid that) that prevented the "merge" command from working in this session. I have put this last line in to show that I did work hard to use "merge".
+#View(VA)
+##At this point, after many days of the same results even after starting over, I decided to manually create the needed dataframe. I don't understand why my merge always gives me an empty data frame, but I do need to finish up the homework.
+State_Size_ReArranged <- slice (State_Size_ReArranged, -52)
+facilities <- (My_VA_States_Summary$Number_Mental_Health_Facilities)
+VA <- cbind(State_Size_ReArranged, facilities)
+head (VA)
+#
+##So now I have the correct dataframe to complete the assignment.
+##
+##2c: Make a new variable that is the calculation of VA hospitals per 1,000 square miles for each state.
+##
+Coverage <- 1000*(VA$facilities)/(VA$SqMiles)
+VA <- cbind (VA, Coverage)
+head (VA)
+##
+##2d: Create another ggplot of VAs per square thousand miles.
+##
+# Master Code to modify for final plot:
+#ggplot (VA, aes(State_Code, Coverage)) + geom_bar (aes (fill = Region), stat = "identity", width = 0.7) + labs (title = "VA Facilities per Thousand Square Miles") + theme (axis.text.x = element_text(angle = 50)) + coord_flip()
+#
+ggplot (data = VA) + geom_col(aes (reorder(State_Code, Coverage), Coverage, color = Region, fill = Region)) + labs (title = "                      VA Facilities per Thousand Square Miles") + labs (x = "State", y = "Facilities per Area") + coord_flip()
+##2e: Clearly there is one prominent outlier, Washington, D.C. There are at least two factors contributing to this. First, the square miles of Washington, D.C. is 50-100+ fold smaller than the smallest states, so the presence of even one facility there would make the Facility/Sq Mile ratio disproportionately high. Second, as the nation's capital with the center of the military services as well as the center of many federal health facilities, Washington, D.C. has more facilities than Delaware, which is 50 times larger in area. Another pattern is that the higher ratios (after Washington, D.C.) tend to be states with smaller areas. Another remarkable thing is that six of the top ten Facility ratios, including four of the top five, are in the Northeast region. The remaining three Northeast states are in the group from 11 - 20. Thus, the Northeast is quite well covered by these VA facilities. In contrast, the more populous states (California, Florida, Texas, etc) tend to have much smaller coverage. Florida, at #11, is the outlier of the most populous states in this regard. On the other end of the spectrum, the West and Midwest have 11 of the bottom 15 states. Before modeling, I would advise adding information relative to population density and transportation. Hospital services need to be appropriate to the size of the population, not just to a surface area. And transportation issues (how to travel to the hospital facility over a distance) can also impact the need for more facilities per unit area.
+
+
+
+
+
+
+
+##
+
+
+```
+
+## R Markdown

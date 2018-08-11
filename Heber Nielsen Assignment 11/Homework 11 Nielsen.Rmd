@@ -1,0 +1,121 @@
+---
+title: "MSDS 6306 Homework 11 Nielsen"
+author: "Heber Nielsen"
+date: "August 9, 2018"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+
+getwd()
+setwd(getwd())
+library("lubridate", lib.loc="~/R/win-library/3.5")
+library("markdown", lib.loc="~/R/win-library/3.5")
+library("rmarkdown", lib.loc="~/R/win-library/3.5")
+library("tidyverse", lib.loc="~/R/win-library/3.5")
+library(xts)
+library("fpp2", lib.loc="~/R/win-library/3.5")
+#Question 1: Time-Series Data
+##
+##Response to 1a:
+Mydax <- (EuStockMarkets[,1])
+##
+##Response to 1b:
+ts.plot(Mydax, xlab = "Year", ylab = "Index Value", main = "DAX Index Daily Closing Value", col = "darkblue")
+lines(x = c(1997, 1997), y = c(1000, 7000), col = "darkred")
+##
+##Response to 1c:
+##
+Mydax_decomp <- decompose (Mydax, type = "additive")
+class (Mydax_decomp)
+names (Mydax_decomp)
+str (Mydax_decomp)
+plot(Mydax_decomp, col = "darkblue")
+lines(x = c(1997, 1997), y = c(-1000, 7000), col = "darkred")
+##
+#Question 2: Temperature Data
+##
+##Response to 2a:
+##
+My_temperature <- (fpp2::maxtemp)
+autoplot(My_temperature)
+##
+##Response to 2b:
+##
+My_tempset <- (My_temperature[21:46])
+str(My_tempset)
+plot (My_tempset)
+##
+##Response to 2c:
+##
+My_forcast1 <- ses (My_tempset, h = 5)
+plot (My_forcast1, ylab = "Temperature", xlab = "Year", main = "Observed (1991 - 2016) and Predicted (2017 - 2021) Maximum Temperatures", type = "o")
+lines (x = c(0, 27), y = c(42.3, 42.3), col = "blue")
+My_forcast1$model$aic
+##
+##Response to 2d:
+##
+My_forcast2 <- holt(My_tempset, damped = T, h = 5)
+plot (My_forcast2, ylab = "Temperature", xlab = "Year", main = "Observed and Holt-Dampened Predicted Temperatures", type = "o")
+lines (x = c(0, 27), y = c(42.29407, 42.57093), col = "blue")
+My_forcast2$model$aic
+##
+##Response to 2e:
+##
+##The first model (part 2c, filename = "My_forcast1") used a simple exponential smoothing model. This had an AICc of 135.4711. The second model (part 2d, filename = "My_forcast2") used a Dampened Holt's method. This had an AICc of 137.3028. The relative likelihood of the Dampened Holt model compared to the simple exponential model is:
+##    exponential ((135.4711 - 137.3028)/2) = 0.08
+##This means that the Dampened Holt's model is only .08 times as probable to minimize the loss of information through the model than the exponential smoothing model. So the exponential smoothing model is better at modeling the data in this instance, because it is more likely to have minimized the loss of information.
+##
+#Question #3: Wands Choose the Wizard
+##
+##Response to 3a:
+##
+Olli <- read.csv("C:/Users/Admin/Documents/TEMP/Unit11TimeSeries_Ollivander.csv", header = F)
+Gregor <- read.csv("C:/Users/Admin/Documents/TEMP/Unit11TimeSeries_Gregorovitch.csv", header = F)
+head (Olli)
+head(Gregor)
+##
+##Response to 3b:
+##
+Olli$V1 <- dmy(Olli$V1)
+head (Olli)
+Gregor$V1 <- dmy(Gregor$V1)
+head (Gregor)
+##
+##Response to 3c:
+##
+Olli <- dplyr::rename (Olli, "OValues" = "V2")
+Gregor <- dplyr::rename (Gregor, "GValues" = "V2")
+
+head (Olli)
+head(Gregor)
+xtsible(Olli$V1)
+xtsible(Gregor$V1)
+Olli_xts <- xts (Olli, order.by = (Olli[,1]), dateFormat = "POSIXct", RECLASS = T)
+Gregor_xts <- xts (Gregor, order.by = (Gregor[,1]), dateFormat = "POSIXct", RECLASS = T)
+head (Olli_xts)
+head (Gregor_xts)
+##Wanted to use the <tidyquant::as_xts> function because xts documentation is quite confusing and it took some time with trial and error to work out, but decided the instructions were too specific. 
+##
+##Response to 3d:
+##
+OlliGolli <- cbind (Olli_xts$OValues, Gregor_xts$GValues)
+head (OlliGolli)
+library("dygraphs", lib.loc="~/R/win-library/3.5")
+library("RColorBrewer", lib.loc="~/R/win-library/3.5")
+dygraph (OlliGolli, xlab = "Year", ylab = "Wands Sold", main = "Were Wizard Wand Sellers Affected by the Voldemart Revival?") %>% dyRangeSelector() %>% dySeries ("OValues", label = "Ollivander", color = "darkblue") %>% dySeries ("GValues", label = "Gregorovitch", color = "darkred") %>% dyShading (from = "1995-01-01", to = "1999-01-01", axis = "x", color = "lime" ) %>% dyHighlight(highlightSeriesOpts = list(strokeWidth = 3))
+
+
+
+
+
+
+
+
+
+
+```
+
+## R Markdown
+
